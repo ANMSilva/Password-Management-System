@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: Password-Manager
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/PasswordManagerDB
+    username: postgres
+    password: pwd
+
+  jpa: #This indicates settings related to the Java Persistence API (JPA), which is used to manage relational data in Java applications.
+    properties: #These are additional properties for the underlying Hibernate framework, which is used as the default JPA implementation in Spring Boot.
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect #tells Hibernate to generate SQL optimized for PostgreSQL.
+    hibernate:
+      ddl-auto: update #Specifies schema management strategy (e.g., update, validate, or create-drop)
+    show-sql: true # Enables logging of SQL statements (for debugging).
+
+#The Hibernate dialect specifies the SQL variant (specific to the database) that
+#Hibernate should use for translating HQL (Hibernate Query Language) or JPQL (Java Persistence Query Language) into SQL.
