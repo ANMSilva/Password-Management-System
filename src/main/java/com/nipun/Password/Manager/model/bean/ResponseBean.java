@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,5 +16,6 @@ public class ResponseBean {
     private String responseCode;
     private String responseMasg;
     private Object content;
+    private List<Object> contentList;
 
 }

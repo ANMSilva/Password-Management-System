@@ -11,6 +11,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @SpringBootTest
 @Slf4j
 class PasswordManagerApplicationTests {
@@ -29,9 +32,9 @@ class PasswordManagerApplicationTests {
     void testAddPassword() throws Exception {
 
         PasswordDataBean passwordDataBean = PasswordDataBean.builder()
-                .plainPassword("testPassword")
-                .description("This is test description")
-                .remark("test remark")
+                .plainPassword("testPassword2")
+                .description("This is test description2")
+                .remark("test remark2")
                 .build();
 
         Requestbean requestbean = Requestbean.builder()
@@ -68,6 +71,32 @@ class PasswordManagerApplicationTests {
         log.info("Last updated time : " + passwordDataBean.getLastUpdatedTime());
 
         log.info("############################################################## retrieving password process completed ##################################################################");
+
+    }
+
+    @Test
+    void testRetrievePasswordList() throws Exception {
+        ResponseBean responseBean = new ResponseBean();
+
+        log.info("############################################################## retrieving password list process started ###################################################################");
+        responseBean = passwordService.retrievePasswordList(responseBean);
+
+
+        log.info(responseBean.getResponseCode());
+        log.info(responseBean.getResponseMasg());
+
+        List<PasswordDataBean> passwordDataBeanList = responseBean.getContentList().stream()
+                .map(p -> modelMapper.map(p, PasswordDataBean.class))
+                .toList();
+
+        passwordDataBeanList.forEach(passwordDataBean -> {
+            log.info("Plain password : " + passwordDataBean.getPlainPassword());
+            log.info("Encoded password : " + passwordDataBean.getEncodedPassword());
+            log.info("Description : " + passwordDataBean.getDescription());
+            log.info("Last updated time : " + passwordDataBean.getLastUpdatedTime());
+        });
+
+        log.info("############################################################## retrieving password list process completed ##################################################################");
 
     }
 }

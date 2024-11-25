@@ -10,7 +10,7 @@ public interface PasswordService {
 
     ResponseBean retrievePassword(String passwordId, ResponseBean responseBean) throws Exception;
 
-    ResponseBean retrievePasswordList(Requestbean requestbean, ResponseBean responseBean) throws Exception;
+    ResponseBean retrievePasswordList(ResponseBean responseBean) throws Exception;
 
     ResponseBean updatePassword(String passwordId, Requestbean requestbean, ResponseBean responseBean) throws Exception;
 

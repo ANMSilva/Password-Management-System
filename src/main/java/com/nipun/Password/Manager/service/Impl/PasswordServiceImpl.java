@@ -21,7 +21,10 @@ import org.springframework.util.ObjectUtils;
 
 import javax.crypto.SecretKey;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.nipun.Password.Manager.utils.KeyUtils.generateKey;
 
@@ -121,11 +124,31 @@ public class PasswordServiceImpl implements PasswordService {
 
     @Override
     @Transactional
-    public ResponseBean retrievePasswordList(Requestbean requestbean, ResponseBean responseBean) throws Exception {
+    public ResponseBean retrievePasswordList(ResponseBean responseBean) throws Exception {
         String responseCode = ResponseCode.RSP_ERROR;
         String responseMasg = Strings.EMPTY;
+        List<Object> passwordDataBeanList = new ArrayList<>();
 
         try {
+            List<Password> passwordList = passwordRepository.findAll();
+
+            passwordDataBeanList = passwordList.stream()
+                    .map(p -> {
+                        try {
+                            SecretKey secretKey = commonService.loadSecretKey(p.getSecretKey());
+                            String plainPassword = commonService.decodedPassword(p.getEncodedPassword(), secretKey);
+                            PasswordDataBean passwordDataBean = PasswordDataBean.builder()
+                                    .plainPassword(plainPassword)
+                                    .encodedPassword(p.getEncodedPassword())
+                                    .description(p.getDescription())
+                                    .lastUpdatedTime(ObjectUtils.isEmpty(p.getLastUpdatedTime()) ? DataVarList.DEFAULT_STRING : p.getLastUpdatedTime().toString())
+                                    .build();
+
+                            return passwordDataBean;
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).collect(Collectors.toList());
 
         } catch (Exception ex) {
             LoggingUtils.logError(log, ex);
@@ -133,7 +156,7 @@ public class PasswordServiceImpl implements PasswordService {
         } finally {
             responseBean.setResponseCode(responseCode);
             responseBean.setResponseMasg(responseMasg);
-            responseBean.setContent(null);
+            responseBean.setContentList(passwordDataBeanList);
         }
 
         return responseBean;
