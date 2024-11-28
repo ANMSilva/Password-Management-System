@@ -49,7 +49,6 @@ public class PasswordServiceImpl implements PasswordService {
             SecretKey secretKey = generateKey(128);
             StringBuffer plainPassword = new StringBuffer(passwordDataBean.getPlainPassword());
             String encodedPassword = commonService.encodedPassword(String.valueOf(plainPassword), secretKey);
-            System.out.println(encodedPassword);
 
             //add new password
             Password password = Password.builder()
@@ -61,7 +60,6 @@ public class PasswordServiceImpl implements PasswordService {
                     .build();
 
             try {
-
                 passwordRepository.saveAndFlush(password);
                 responseCode = ResponseCode.RSP_SUCCESS;
                 responseMasg = MessageVarList.PASSWORD_ADD_SUCC;
